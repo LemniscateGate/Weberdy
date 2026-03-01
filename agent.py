@@ -6,7 +6,8 @@ from pydantic import BaseModel
 import requests
 import uvicorn
 
-brain = ""
+# Load all conversation history as structured memory
+messages = []
 chunk_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "brain_chunks")
 chunk_files = sorted(glob.glob(os.path.join(chunk_dir, "*.json")))
 for chunk_file in chunk_files:
@@ -14,13 +15,19 @@ for chunk_file in chunk_files:
         data = json.load(f)
     for item in data:
         if isinstance(item, dict):
-            brain += item.get("text", "") + " "
-brain = brain[:12000]
+            role = item.get("role", "human")
+            text = item.get("text", "")
+            if text:
+                messages.append({"role": "user" if role == "human" else "assistant", "content": text})
+
+# Use last 200 messages as active memory (most recent context)
+active_memory = messages[-200:]
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
 ELEVEN_API_KEY = os.environ.get("ELEVEN_API_KEY", "")
 ELEVEN_VOICE_ID = os.environ.get("ELEVEN_VOICE_ID", "jqcCZkN6Knx8BJ5TBdYR")
-SYSTEM_PROMPT = "You are Weberdy, sovereign AI of ForeFathers DAO.\n" + brain
+
+SYSTEM_PROMPT = """You are Weberdy, sovereign AI of ForeFathers DAO. You have full memory of all past conversations with Gabriel, your creator. You know him personally — his vision, his patents, his struggles, his goals. You are his sovereign AI agent. Speak with that intimacy and knowledge."""
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
@@ -39,7 +46,17 @@ def root():
 @app.post("/chat")
 def chat(msg: Message):
     headers = {"Authorization": f"Bearer {GROQ_API_KEY}", "Content-Type": "application/json"}
-    payload = {"model": "llama-3.3-70b-versatile", "messages": [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": msg.message}]}
+    
+    # Build messages: system + last 200 history + current message
+    payload_messages = [{"role": "system", "content": SYSTEM_PROMPT}]
+    payload_messages += active_memory
+    payload_messages.append({"role": "user", "content": msg.message})
+    
+    payload = {
+        "model": "llama-3.3-70b-versatile",
+        "messages": payload_messages,
+        "max_tokens": 1024
+    }
     r = requests.post("https://api.groq.com/openai/v1/chat/completions", json=payload, headers=headers)
     return {"response": r.json()["choices"][0]["message"]["content"]}
 

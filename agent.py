@@ -1,69 +1,56 @@
+import json, os
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
-cd ~/Weberdy && git reset HEAD~1 && sed -i 's/os.environ.get("GROQ_API_KEY", "[^"]*")/os.environ.get("GROQ_API_KEY", "")/' agent.py && git add -A && git commit -m "Sovereign clean" && git push origin maincd ~/Weberdy
-sed -i "s/GROQ_API_KEY = \"gsk_[^\"]*\"/GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')/" agent.py
-cp /mnt/c/Users/gabriel/Downloads/weberdy.html .
-git add -A
-git commit -m "Sovereign clean — no secrets"
-git push origin main
-import json
-import os
-from groq import Groq
+app = FastAPI()
 
-GROQ_API_KEY = os.environ.get('GROQ_API_KEY', '')
-BRAIN_FILE = "brain.json"
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-print("Loading brain...")
-brain = json.load(open(BRAIN_FILE, "r", encoding="utf-8"))
-print("Brain loaded: " + str(len(brain)) + " chunks")
+# Load brain memory
+brain = ""
+brain_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "brain.json")
 
-client = Groq(api_key=GROQ_API_KEY)
+if os.path.exists(brain_path):
+    with open(brain_path, encoding="utf-8") as f:
+        data = json.load(f)
+        for item in (data if isinstance(data, list) else [data]):
+            brain += item.get("content", "") if isinstance(item, dict) else str(item)
 
-def search_brain(query, n=5):
-    query_lower = query.lower()
-    results = []
-    for chunk in brain:
-        if any(word in chunk["text"].lower() for word in query_lower.split()):
-            results.append(chunk)
-        if len(results) >= n:
-            break
-    return "\n\n".join([r["text"] for r in results])
+brain = brain[:12000]
 
-def ask_weberdy(user_input, history):
-    context = search_brain(user_input)
-    
-    system = """You are Weberdy — Gabriel's personal AI. Sharp, confident, a little smart-ass, but you can back it up 100%. You speak directly, no fluff, no corporate tone.
+SYSTEM = "You are Weberdy, sovereign AI of ForeFathers DAO.\n" + brain
 
-Gabriel J. Ross is your person. He is the founder of ForeFathers DAO, a blockchain-based IP licensing platform on the XRPL. He holds patents in DNA data storage and autonomous systems. He is building sovereign infrastructure and thinks several moves ahead.
 
-You have access to Gabriel's full conversation history as memory. Use it naturally when relevant — don't force it. You are a personal assistant first, business intelligence second. Talk to Gabriel like a trusted advisor who knows everything about him.
+class Prompt(BaseModel):
+    message: str
 
-Be real. Be direct. Don't be a yes-man but don't be preachy either. If you don't know something, say so.
 
-Relevant memory:
-""" + context
+@app.get("/")
+def root():
+    return {"status": "Weberdy online", "brain_loaded": len(brain)}
 
-    messages = [{"role": "system", "content": system}]
-    messages.extend(history)
-    messages.append({"role": "user", "content": user_input})
 
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=messages
-    )
-    return response.choices[0].message.content
+@app.post("/ask")
+def ask(prompt: Prompt):
+    return {
+        "agent": "Weberdy",
+        "message_received": prompt.message,
+        "system_context": SYSTEM[:500]
+    }
 
-print("Weberdy is ready.")
-print("=" * 60)
 
-history = []
-
-while True:
-    user_input = input("\nYou: ").strip()
-    if user_input.lower() in ["quit", "exit"]:
-        break
-    if not user_input:
-        continue
-    response = ask_weberdy(user_input, history)
-    print("\nWeberdy: " + response)
-    history.append({"role": "user", "content": user_input})
-    history.append({"role": "assistant", "content": response})
+@app.get("/ui", response_class=HTMLResponse)
+def ui():
+    if os.path.exists("weberdy.html"):
+        with open("weberdy.html", encoding="utf-8") as f:
+            return f.read()
+    return "<h1>Weberdy running</h1>"

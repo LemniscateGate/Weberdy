@@ -1,4 +1,4 @@
-import json, os
+import json, os, glob
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,15 +7,14 @@ import requests
 import uvicorn
 
 brain = ""
-brain_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "brain.json")
-with open(brain_path, "r", encoding="utf-8") as f:
-    data = json.load(f)
-if isinstance(data, list):
+chunk_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "brain_chunks")
+chunk_files = sorted(glob.glob(os.path.join(chunk_dir, "*.json")))
+for chunk_file in chunk_files:
+    with open(chunk_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
     for item in data:
         if isinstance(item, dict):
-            brain += item.get("content", "")
-        else:
-            brain += str(item)
+            brain += item.get("text", "") + " "
 brain = brain[:12000]
 
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")

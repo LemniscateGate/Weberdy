@@ -448,7 +448,7 @@
     setStatus('thinking');
 
     try {
-      const res = await fetch(PROXY, {
+      const res = await fetch(PROXY + '/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

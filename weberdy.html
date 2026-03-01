@@ -458,7 +458,7 @@
       });
 
       const data = await res.json();
-      const reply = data.reply || 'Weberdy is thinking...';
+      const reply = data.response || 'Weberdy is thinking...';
 
       removeThinking();
       setStatus('online');

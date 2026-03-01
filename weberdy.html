@@ -388,10 +388,7 @@
 
   // ── TEXT TO SPEECH ────────────────────────────────────────
   function speakText(text, bubbleEl) {
-    const ELEVEN_KEY = "ace89717e79874c399bca0ba82a74e55f6ffc7536b4dbaf12e1904fe76e7a798";
-    const VOICE_ID = "jqcCZkN6Knx8BJ5TBdYR";
-    fetch(`https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`, {method:"POST",headers:{"xi-api-key":ELEVEN_KEY,"Content-Type":"application/json"},body:JSON.stringify({text:text,model_id:"eleven_monolingual_v1",voice_settings:{stability:0.5,similarity_boost:0.75}})}).then(r=>r.blob()).then(b=>new Audio(URL.createObjectURL(b)).play());
-    if (false) {
+    if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
     utt.rate = 0.92;

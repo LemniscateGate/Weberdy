@@ -1,12 +1,11 @@
-import json, os
+import json
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 app = FastAPI()
 
-# Enable CORS
+# Enable CORS so the IPFS interface can reach the API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -15,42 +14,42 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Load brain memory
-brain = ""
-brain_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "brain.json")
-
-if os.path.exists(brain_path):
-    with open(brain_path, encoding="utf-8") as f:
-        data = json.load(f)
-        for item in (data if isinstance(data, list) else [data]):
-            brain += item.get("content", "") if isinstance(item, dict) else str(item)
-
-brain = brain[:12000]
-
-SYSTEM = "You are Weberdy, sovereign AI of ForeFathers DAO.\n" + brain
-
+MEMORY_FILE = "brain.json"
 
 class Prompt(BaseModel):
     message: str
 
 
-@app.get("/")
-def root():
-    return {"status": "Weberdy online", "brain_loaded": len(brain)}
+def load_memory():
+    try:
+        with open(MEMORY_FILE, "r") as f:
+            return json.load(f)
+    except:
+        return []
 
 
-@app.post("/ask")
-def ask(prompt: Prompt):
+def save_memory(memory):
+    with open(MEMORY_FILE, "w") as f:
+        json.dump(memory, f, indent=2)
+
+
+@app.post("/v/prompt")
+async def prompt(p: Prompt):
+
+    memory = load_memory()
+
+    memory.append({
+        "user": p.message
+    })
+
+    save_memory(memory)
+
     return {
-        "agent": "Weberdy",
-        "message_received": prompt.message,
-        "system_context": SYSTEM[:500]
+        "response": "memory received",
+        "message": p.message
     }
 
 
-@app.get("/ui", response_class=HTMLResponse)
-def ui():
-    if os.path.exists("weberdy.html"):
-        with open("weberdy.html", encoding="utf-8") as f:
-            return f.read()
-    return "<h1>Weberdy running</h1>"
+@app.get("/")
+async def root():
+    return {"status": "Weberdy API running"}

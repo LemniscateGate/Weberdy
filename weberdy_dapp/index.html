@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WEBERDY Interface</title>
+
+<style>
+body{
+background:#0f172a;
+color:white;
+font-family:Arial;
+text-align:center;
+margin-top:40px;
+}
+
+#chat{
+width:60%;
+margin:auto;
+border:1px solid #334155;
+padding:20px;
+height:300px;
+overflow-y:auto;
+}
+
+input{
+width:50%;
+padding:10px;
+margin-top:20px;
+}
+
+button{
+padding:10px 20px;
+margin-left:10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>WEBERDY</h1>
+<p>ForeFathers DAO — Sovereign Agent Interface</p>
+
+<div id="chat"></div>
+
+<input id="message" placeholder="Speak to Weberdy..." />
+
+<button onclick="sendMessage()">Send</button>
+
+<script src="agent.js"></script>
+
+</body>
+</html>

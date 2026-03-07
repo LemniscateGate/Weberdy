@@ -1,0 +1,43 @@
+import json
+import os
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+app = FastAPI()
+
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Load brain memory
+brain = ""
+brain_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "brain.json")
+
+if os.path.exists(brain_path):
+    with open(brain_path, encoding="utf-8") as f:
+        data = json.load(f)
+        for item in (data if isinstance(data, list) else [data]):
+            brain += item.get("content", "") if isinstance(item, dict) else str(item)
+
+SYSTEM = "You are Weberdy, sovereign AI of ForeFathers DAO.\n" + brain
+
+
+class Prompt(BaseModel):
+    message: str
+
+
+@app.get("/")
+def root():
+    return {"status": "Weberdy online", "brain_loaded": len(brain)}
+
+
+@app.get("/status")
+def status():
+    return {"status": "running", "brain_loaded": len(brain)}

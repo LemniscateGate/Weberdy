@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Weberdy — ForeFathers DAO</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
     --black: #080808;
@@ -314,7 +313,7 @@
 <div id="info-toast" class="toast"></div>
 
 <script>
-  const PROXY = 'https://weberdy-proxy.gabriel536092.workers.dev';
+  const PROXY = 'http://127.0.0.1:8000/prompt';
 
   let conversationHistory = [];
   let thinkingEl = null;
@@ -511,5 +510,6 @@
     setTimeout(() => t.classList.remove('show'), duration);
   }
 </script>
+<script src="agent.js"></script>
 </body>
 </html>

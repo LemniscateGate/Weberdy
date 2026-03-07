@@ -3,18 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Weberdy — ForeFathers DAO</title>
+<title>WEB∃RDY</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   :root {
     --black: #080808;
     --surface: #141414;
     --border: rgba(255,255,255,0.07);
-    --gold: #c9a84c;
-    --gold-dim: rgba(201,168,76,0.15);
-    --gold-glow: rgba(201,168,76,0.35);
+    --steel: #5ba3c9;
+    --steel-bright: #a8d8f0;
+    --steel-dim: #1a3a4a;
+    --steel-soft: rgba(91,163,201,0.15);
+    --steel-glow: rgba(91,163,201,0.35);
     --text: #e8e0d0;
     --muted: rgba(232,224,208,0.4);
-    --user-bg: rgba(201,168,76,0.12);
+    --user-bg: rgba(91,163,201,0.1);
     --agent-bg: rgba(255,255,255,0.04);
     --red: #c94c4c;
   }
@@ -31,174 +34,229 @@
 
   body::before {
     content: '';
-    position: fixed;
-    inset: 0;
-    background: 
-      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(201,168,76,0.08) 0%, transparent 70%),
-      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(201,168,76,0.04) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(91,163,201,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(91,163,201,0.04) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 3px);
+    pointer-events: none; z-index: 0;
   }
 
   #app {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    height: 100dvh;
-    max-width: 480px;
-    margin: 0 auto;
+    position: relative; z-index: 1;
+    display: flex; flex-direction: column;
+    height: 100vh; height: 100dvh;
+    max-width: 520px; margin: 0 auto;
   }
 
+  /* ── HEADER ── */
   header {
     padding: 20px 24px 16px;
-    border-bottom: 1px solid var(--border);
-    background: linear-gradient(180deg, rgba(8,8,8,0.95) 0%, rgba(8,8,8,0.8) 100%);
+    border-bottom: 1px solid rgba(91,163,201,0.12);
+    background: linear-gradient(180deg, rgba(8,8,8,0.97) 0%, rgba(8,8,8,0.85) 100%);
     backdrop-filter: blur(20px);
     flex-shrink: 0;
   }
-
   .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 4px;
+    display: flex; align-items: center;
+    justify-content: space-between; margin-bottom: 6px;
   }
 
-  .agent-name { font-size: 22px; font-weight: 300; letter-spacing: 0.12em; }
-  .agent-name span { color: var(--gold); font-style: italic; }
+  /* WORDMARK — one word, all steel */
+  .agent-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 24px; font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--steel-bright);
+    text-shadow: 0 0 20px rgba(168,216,240,0.45), 0 0 50px rgba(91,163,201,0.2);
+    animation: nameBreath 4s ease-in-out infinite alternate;
+  }
+  .be { display: inline-block; transform: scaleX(-1); }
+  @keyframes nameBreath {
+    from { text-shadow: 0 0 16px rgba(168,216,240,0.35), 0 0 40px rgba(91,163,201,0.15); }
+    to   { text-shadow: 0 0 28px rgba(168,216,240,0.7), 0 0 65px rgba(91,163,201,0.38), 0 0 100px rgba(91,163,201,0.14); }
+  }
 
   .header-controls { display: flex; align-items: center; gap: 14px; }
 
   .voice-toggle {
-    background: none;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 5px;
+    background: none; border: none; cursor: pointer;
+    display: flex; align-items: center; gap: 5px;
     font-family: 'Share Tech Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.15em;
-    color: var(--muted);
-    text-transform: uppercase;
-    transition: color 0.2s;
-    padding: 4px;
+    font-size: 9px; letter-spacing: 0.15em;
+    color: var(--muted); text-transform: uppercase;
+    transition: color 0.2s; padding: 4px;
   }
-  .voice-toggle.active { color: var(--gold); }
+  .voice-toggle.active { color: var(--steel-bright); }
   .voice-toggle svg { width: 12px; height: 12px; fill: currentColor; }
 
-  .status-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    background: #4a4a4a;
-    transition: background 0.3s, box-shadow 0.3s;
+  /* ORB */
+  .orb {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #0c2233, #020810);
+    border: 1px solid var(--steel-dim);
+    position: relative; flex-shrink: 0;
+    transition: border-color 0.4s, box-shadow 0.4s;
   }
-  .status-dot.online { background: var(--gold); box-shadow: 0 0 8px var(--gold-glow); animation: pulse-dot 2s infinite; }
-  .status-dot.thinking { background: var(--gold); animation: pulse-fast 0.6s infinite; }
-
-  @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-  @keyframes pulse-fast { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.7); } }
+  .orb.online   { animation: orbIdle   3s   ease-in-out infinite; }
+  .orb.speaking { border-color: var(--steel); animation: orbSpeak 1s   ease-in-out infinite; }
+  .orb.thinking { border-color: var(--steel); animation: orbThink 0.7s ease-in-out infinite; }
+  @keyframes orbIdle  { 0%,100%{box-shadow:0 0 4px rgba(91,163,201,0.15)}  50%{box-shadow:0 0 10px rgba(91,163,201,0.3)} }
+  @keyframes orbSpeak { 0%,100%{box-shadow:0 0 10px rgba(91,163,201,0.6),0 0 24px rgba(91,163,201,0.3)} 50%{box-shadow:0 0 22px rgba(91,163,201,0.9),0 0 48px rgba(91,163,201,0.5)} }
+  @keyframes orbThink { 0%,100%{box-shadow:0 0 8px rgba(91,163,201,0.35)}  50%{box-shadow:0 0 18px rgba(91,163,201,0.65)} }
 
   .header-sub {
     font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.15em; text-transform: uppercase;
   }
 
+  /* ── MESSAGES ── */
   #messages {
-    flex: 1;
-    overflow-y: auto;
+    flex: 1; overflow-y: auto;
     padding: 24px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    display: flex; flex-direction: column; gap: 16px;
     scroll-behavior: smooth;
   }
   #messages::-webkit-scrollbar { width: 2px; }
-  #messages::-webkit-scrollbar-thumb { background: var(--border); }
+  #messages::-webkit-scrollbar-thumb { background: var(--steel-dim); }
 
   .message {
     display: flex; flex-direction: column; gap: 4px;
-    animation: fadeUp 0.3s ease;
-    max-width: 88%;
+    animation: fadeUp 0.3s ease; max-width: 88%;
   }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-
-  .message.user { align-self: flex-end; align-items: flex-end; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .message.user  { align-self: flex-end;  align-items: flex-end; }
   .message.agent { align-self: flex-start; align-items: flex-start; }
-  .message.system { align-self: center; align-items: center; max-width: 100%; }
 
   .message-label {
     font-family: 'Share Tech Mono', monospace;
     font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
     color: var(--muted); padding: 0 4px;
   }
-  .message.user .message-label { color: rgba(201,168,76,0.6); }
+  .message.user .message-label { color: rgba(91,163,201,0.6); }
 
   .message-bubble {
     padding: 12px 16px;
     font-size: 15px; font-weight: 300; line-height: 1.65;
     border: 1px solid var(--border);
+    position: relative; overflow: hidden;
   }
   .message.user .message-bubble {
     background: var(--user-bg);
-    border-color: rgba(201,168,76,0.2);
+    border-color: rgba(91,163,201,0.2);
     border-radius: 12px 12px 2px 12px;
   }
   .message.agent .message-bubble {
     background: var(--agent-bg);
     border-radius: 12px 12px 12px 2px;
+    border-color: var(--steel-dim);
+    border-left: 2px solid var(--steel);
+    animation: bubbleGlow 3.5s ease-in-out infinite alternate;
   }
-  .message.system .message-bubble {
-    background: transparent; border: none;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px; letter-spacing: 0.15em;
-    color: var(--muted); text-align: center; padding: 4px;
+  @keyframes bubbleGlow {
+    from { box-shadow: 0 0 12px rgba(91,163,201,0.06); border-left-color: var(--steel-dim); }
+    to   { box-shadow: 0 0 26px rgba(91,163,201,0.18), inset 0 0 14px rgba(91,163,201,0.04); border-left-color: var(--steel); }
   }
+  .message.agent .message-bubble::after {
+    content: '';
+    position: absolute; top:0; left:-100%; width:55%; height:100%;
+    background: linear-gradient(90deg, transparent, rgba(168,216,240,0.04), transparent);
+    animation: shimmer 2s ease forwards;
+  }
+  @keyframes shimmer { to { left: 200%; } }
 
+  /* THINKING */
   .thinking-bubble {
     display: flex; gap: 5px; align-items: center;
     padding: 14px 18px;
     background: var(--agent-bg);
-    border: 1px solid var(--border);
+    border: 1px solid var(--steel-dim);
+    border-left: 2px solid var(--steel-dim);
     border-radius: 12px 12px 12px 2px;
+    animation: thinkBorder 1.4s ease-in-out infinite;
+  }
+  @keyframes thinkBorder {
+    0%,100%{ border-left-color: var(--steel-dim); }
+    50%    { border-left-color: var(--steel); box-shadow: 0 0 14px rgba(91,163,201,0.12); }
   }
   .thinking-dot {
     width: 5px; height: 5px; border-radius: 50%;
-    background: var(--gold); opacity: 0.4;
-    animation: thinking 1.4s infinite;
+    background: var(--steel-dim);
+    animation: tdot 1.3s ease-in-out infinite;
   }
-  .thinking-dot:nth-child(2) { animation-delay: 0.2s; }
-  .thinking-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes thinking {
-    0%, 80%, 100% { opacity: 0.4; transform: scale(1); }
-    40% { opacity: 1; transform: scale(1.3); }
+  .thinking-dot:nth-child(2){animation-delay:0.2s}
+  .thinking-dot:nth-child(3){animation-delay:0.4s}
+  @keyframes tdot {
+    0%,80%,100%{opacity:0.35;transform:scale(0.7);background:var(--steel-dim)}
+    40%        {opacity:1;transform:scale(1.2);background:var(--steel-bright);box-shadow:0 0 6px var(--steel)}
   }
 
-  .speaking-indicator { display: inline-flex; align-items: center; gap: 3px; margin-left: 8px; vertical-align: middle; }
-  .speaking-bar { width: 3px; height: 10px; background: var(--gold); border-radius: 2px; animation: speak-bar 0.8s ease infinite; }
-  .speaking-bar:nth-child(2) { animation-delay: 0.15s; height: 14px; }
-  .speaking-bar:nth-child(3) { animation-delay: 0.3s; }
-  @keyframes speak-bar { 0%, 100% { transform: scaleY(0.4); opacity: 0.5; } 50% { transform: scaleY(1); opacity: 1; } }
+  .speaking-indicator { display:inline-flex;align-items:center;gap:3px;margin-left:8px;vertical-align:middle; }
+  .speaking-bar { width:3px;height:10px;background:var(--steel);border-radius:2px;animation:speak-bar 0.8s ease infinite; }
+  .speaking-bar:nth-child(2){animation-delay:0.15s;height:14px}
+  .speaking-bar:nth-child(3){animation-delay:0.3s}
+  @keyframes speak-bar{0%,100%{transform:scaleY(0.4);opacity:0.5}50%{transform:scaleY(1);opacity:1}}
 
+  /* ── FOOTER ── */
   footer {
     padding: 12px 16px 20px;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid rgba(91,163,201,0.12);
     background: linear-gradient(0deg, rgba(8,8,8,0.98) 0%, rgba(8,8,8,0.85) 100%);
     backdrop-filter: blur(20px);
     flex-shrink: 0;
+    display: flex; flex-direction: column; gap: 9px;
   }
 
-  .input-row { display: flex; gap: 10px; align-items: flex-end; }
+  .upload-zone {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 14px;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(91,163,201,0.15);
+    cursor: pointer; transition: all 0.2s;
+    position: relative; border-radius: 6px;
+  }
+  .upload-zone input[type="file"] {
+    position: absolute; inset: 0;
+    opacity: 0; cursor: pointer; width: 100%; height: 100%;
+  }
+  .upload-zone:hover, .upload-zone.drag {
+    border-color: var(--steel-dim);
+    background: rgba(91,163,201,0.04);
+  }
+  .upload-icon { font-size: 14px; color: var(--muted); transition: color 0.2s; flex-shrink: 0; }
+  .upload-zone:hover .upload-icon { color: var(--steel); }
+  .upload-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; color: var(--muted);
+    letter-spacing: 0.1em; transition: color 0.2s;
+  }
+  .upload-zone:hover .upload-label { color: var(--steel); }
+  .file-tags { margin-left:auto; display:flex; gap:5px; flex-wrap:wrap; max-width:60%; justify-content:flex-end; }
+  .ftag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px; padding: 2px 8px;
+    background: rgba(91,163,201,0.08);
+    border: 1px solid var(--steel-dim);
+    color: var(--steel); letter-spacing: 0.04em;
+    border-radius: 3px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .ftag-x { cursor:pointer; opacity:0.5; transition:opacity 0.15s; }
+  .ftag-x:hover { opacity:1; }
+
+  .input-row { display:flex; gap:10px; align-items:flex-end; }
 
   #message-input {
     flex: 1;
     background: var(--surface);
-    border: 1px solid var(--border);
+    border: 1px solid rgba(91,163,201,0.15);
     border-radius: 8px;
     padding: 12px 14px;
     font-family: 'Cormorant Garamond', serif;
@@ -207,47 +265,59 @@
     resize: none; outline: none;
     min-height: 46px; max-height: 120px;
     line-height: 1.4;
-    transition: border-color 0.2s;
-    overflow-y: auto;
+    transition: border-color 0.2s, box-shadow 0.2s;
   }
-  #message-input:focus { border-color: rgba(201,168,76,0.4); }
+  #message-input:focus {
+    border-color: var(--steel-dim);
+    box-shadow: 0 0 16px rgba(91,163,201,0.1);
+  }
   #message-input::placeholder { color: rgba(255,255,255,0.2); font-style: italic; }
   #message-input.listening { border-color: var(--red); animation: listening-pulse 1s infinite; }
   @keyframes listening-pulse {
-    0%, 100% { border-color: var(--red); box-shadow: 0 0 0 0 rgba(201,76,76,0.3); }
-    50% { border-color: rgba(201,76,76,0.6); box-shadow: 0 0 0 4px rgba(201,76,76,0); }
+    0%,100%{border-color:var(--red);box-shadow:0 0 0 0 rgba(201,76,76,0.3)}
+    50%{box-shadow:0 0 0 4px rgba(201,76,76,0)}
   }
 
   #mic-btn {
     width: 46px; height: 46px;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border);
+    background: rgba(91,163,201,0.06);
+    border: 1px solid rgba(91,163,201,0.2);
     border-radius: 8px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.2s; flex-shrink: 0;
   }
+  #mic-btn:hover { background: rgba(91,163,201,0.12); border-color: var(--steel-dim); }
   #mic-btn.active { background: rgba(201,76,76,0.15); border-color: var(--red); }
   #mic-btn.active svg { fill: var(--red); }
   #mic-btn svg { width: 18px; height: 18px; fill: var(--muted); transition: fill 0.2s; }
 
   #send-btn {
     width: 46px; height: 46px;
-    background: var(--gold-dim);
-    border: 1px solid rgba(201,168,76,0.4);
+    background: rgba(91,163,201,0.1);
+    border: 1px solid rgba(91,163,201,0.4);
     border-radius: 8px; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
     transition: all 0.2s; flex-shrink: 0;
   }
-  #send-btn:active { background: rgba(201,168,76,0.25); border-color: var(--gold); }
+  #send-btn:hover:not(:disabled) {
+    background: rgba(91,163,201,0.22);
+    border-color: var(--steel);
+    box-shadow: 0 0 16px rgba(91,163,201,0.25);
+  }
   #send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-  #send-btn svg { width: 18px; height: 18px; fill: var(--gold); }
+  #send-btn svg { width: 18px; height: 18px; fill: var(--steel-bright); }
 
   .empty-state {
     flex: 1; display: flex; flex-direction: column;
     align-items: center; justify-content: center;
-    gap: 12px; padding: 40px; text-align: center; opacity: 0.5;
+    gap: 12px; padding: 40px; text-align: center; opacity: 0.35;
   }
-  .empty-sigil { font-size: 48px; font-weight: 300; color: var(--gold); font-style: italic; line-height: 1; }
+  .empty-sigil {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 32px; color: var(--steel-bright);
+    text-shadow: 0 0 20px rgba(168,216,240,0.4);
+    letter-spacing: 0.2em;
+  }
   .empty-text { font-size: 13px; font-weight: 300; letter-spacing: 0.08em; color: var(--muted); line-height: 1.6; }
 
   .toast {
@@ -261,41 +331,40 @@
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   #error-toast { background: rgba(180,60,60,0.9); color: #fff; }
-  #info-toast { background: rgba(201,168,76,0.92); color: #080808; }
-
-  .session-divider { display: flex; align-items: center; gap: 12px; padding: 4px 0; }
-  .session-divider::before, .session-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-  .session-divider span {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 9px; letter-spacing: 0.2em; color: var(--muted);
-    text-transform: uppercase; white-space: nowrap;
-  }
+  #info-toast  { background: rgba(91,163,201,0.92); color: #080808; }
 </style>
 </head>
 <body>
 <div id="app">
+
   <header>
     <div class="header-top">
-      <div class="agent-name">W<span>eberdy</span></div>
+      <div class="agent-name">WEB<span class="be">E</span>RDY</div>
       <div class="header-controls">
         <button class="voice-toggle" id="voice-toggle" onclick="toggleAutoSpeak()">
           <svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
           Speak
         </button>
-        <div class="status-dot online" id="status-dot"></div>
+        <div class="orb online" id="orb"></div>
       </div>
     </div>
-    <div class="header-sub">ForeFathers DAO — Sovereign Agent Interface</div>
+    <div class="header-sub">ForeFathers DAO — Sovereign Agent</div>
   </header>
 
   <div id="messages">
     <div class="empty-state" id="empty-state">
-      <div class="empty-sigil">W</div>
-      <div class="empty-text">Weberdy is standing by.<br>Tap the mic to speak.</div>
+      <div class="empty-sigil">WEB<span class="be">E</span>RDY</div>
+      <div class="empty-text">Sovereign node standing by.<br>Type or speak.</div>
     </div>
   </div>
 
   <footer>
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" multiple accept="*/*" onchange="handleFiles(this.files)">
+      <span class="upload-icon">⊕</span>
+      <span class="upload-label">ATTACH FILES · IMAGES · DOCS</span>
+      <div class="file-tags" id="fileTags"></div>
+    </div>
     <div class="input-row">
       <textarea id="message-input" placeholder="Speak or type to Weberdy..." rows="1"
         onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
@@ -313,26 +382,35 @@
 <div id="info-toast" class="toast"></div>
 
 <script>
-  const PROXY = 'http://127.0.0.1:8000/prompt';
-
+  const API = 'http://localhost:8001';
   let conversationHistory = [];
   let thinkingEl = null;
   let autoSpeak = false;
   let isListening = false;
   let recognition = null;
   let isSpeaking = false;
+  let attachedFiles = [];
 
-  // ── INIT ─────────────────────────────────────────────────
   window.addEventListener('load', () => {
     window.speechSynthesis && window.speechSynthesis.getVoices();
     initSpeechRecognition();
-    setStatus('online');
     document.getElementById('message-input').addEventListener('input', () => {
       document.getElementById('send-btn').disabled = !document.getElementById('message-input').value.trim();
     });
+    checkAgent();
   });
 
-  // ── SPEECH RECOGNITION ───────────────────────────────────
+  async function checkAgent() {
+    try {
+      const r = await fetch(`${API}/`, { signal: AbortSignal.timeout(3000) });
+      if (r.ok) setOrb('online');
+    } catch { setOrb('offline'); }
+  }
+
+  function setOrb(state) {
+    document.getElementById('orb').className = `orb ${state}`;
+  }
+
   function initSpeechRecognition() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SR) { document.getElementById('mic-btn').style.opacity = '0.3'; return; }
@@ -340,7 +418,6 @@
     recognition.continuous = false;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
-
     recognition.onstart = () => {
       isListening = true;
       document.getElementById('mic-btn').classList.add('active');
@@ -348,7 +425,6 @@
       inp.classList.add('listening');
       inp.placeholder = 'Listening...';
     };
-
     recognition.onresult = (e) => {
       let interim = '', final = '';
       for (let i = e.resultIndex; i < e.results.length; i++) {
@@ -360,18 +436,13 @@
       autoResize(inp);
       if (final) setTimeout(() => sendMessage(), 400);
     };
-
-    recognition.onerror = (e) => {
-      stopListening();
-      if (e.error !== 'no-speech') showError('Mic: ' + e.error);
-    };
-
+    recognition.onerror = (e) => { stopListening(); if (e.error !== 'no-speech') showError('Mic: ' + e.error); };
     recognition.onend = () => stopListening();
   }
 
   function toggleMic() {
     if (isListening) { stopListening(); return; }
-    if (!recognition) { showError('Speech not supported — use Chrome or Safari'); return; }
+    if (!recognition) { showError('Speech not supported — use Chrome'); return; }
     if (isSpeaking) window.speechSynthesis.cancel();
     try { recognition.start(); } catch(e) { showError('Could not access microphone'); }
   }
@@ -385,29 +456,25 @@
     try { recognition && recognition.stop(); } catch(e) {}
   }
 
-  // ── TEXT TO SPEECH ────────────────────────────────────────
   function speakText(text, bubbleEl) {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
     const utt = new SpeechSynthesisUtterance(text);
-    utt.rate = 0.92;
-    utt.pitch = 1.0;
-    utt.volume = 1.0;
+    utt.rate = 0.92; utt.pitch = 1.0; utt.volume = 1.0;
     const voices = window.speechSynthesis.getVoices();
     const preferred = voices.find(v =>
       v.name.includes('Samantha') || v.name.includes('Google US English') ||
       v.name.includes('Alex') || (v.lang === 'en-US' && v.localService)
     );
     if (preferred) utt.voice = preferred;
-
     isSpeaking = true;
+    setOrb('speaking');
     const indicator = document.createElement('span');
     indicator.className = 'speaking-indicator';
     indicator.innerHTML = '<span class="speaking-bar"></span><span class="speaking-bar"></span><span class="speaking-bar"></span>';
     if (bubbleEl) bubbleEl.appendChild(indicator);
-
     utt.onend = utt.onerror = () => {
-      isSpeaking = false;
+      isSpeaking = false; setOrb('online');
       if (indicator.parentNode) indicator.remove();
     };
     window.speechSynthesis.speak(utt);
@@ -416,61 +483,61 @@
   function toggleAutoSpeak() {
     autoSpeak = !autoSpeak;
     document.getElementById('voice-toggle').classList.toggle('active', autoSpeak);
-    showInfo(autoSpeak ? 'Voice responses ON' : 'Voice responses OFF');
+    showInfo(autoSpeak ? 'Voice ON' : 'Voice OFF');
   }
 
-  // ── STATUS ────────────────────────────────────────────────
-  function setStatus(s) {
-    const d = document.getElementById('status-dot');
-    d.className = 'status-dot' + (s === 'online' ? ' online' : s === 'thinking' ? ' thinking' : '');
-  }
-
-  // ── SEND MESSAGE ──────────────────────────────────────────
   async function sendMessage() {
     const inp = document.getElementById('message-input');
     const text = inp.value.trim();
     if (!text) return;
     inp.value = ''; autoResize(inp);
     document.getElementById('send-btn').disabled = true;
-    hideEmptyState();
-
+    hideEmpty();
     addMessage(text, 'user', 'You');
     conversationHistory.push({ role: 'user', content: text });
-
     showThinking();
-    setStatus('thinking');
-
+    setOrb('thinking');
     try {
-      const res = await fetch(PROXY, {
+      const r = await fetch(`${API}/v/prompt`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: text,
-          history: conversationHistory.slice(-10)
-        })
+        body: JSON.stringify({ prompt: text }),
+        signal: AbortSignal.timeout(30000)
       });
-
-      const data = await res.json();
-      const reply = data.reply || 'Weberdy is thinking...';
-
+      const d = await r.json();
+      const reply = d.response || d.answer || d.text || JSON.stringify(d);
       removeThinking();
-      setStatus('online');
-
       const bubble = addMessage(reply, 'agent', 'Weberdy');
       conversationHistory.push({ role: 'assistant', content: reply });
-
       if (autoSpeak) setTimeout(() => speakText(reply, bubble), 200);
-
+      else setOrb('online');
     } catch(e) {
-      removeThinking();
-      setStatus('online');
-      showError('Connection failed — check Worker');
+      removeThinking(); setOrb('online');
+      addMessage(e.name === 'TimeoutError' ? '⚠ Timeout — is Weberdy running?' : `⚠ ${e.message}`, 'agent', 'Weberdy');
     }
   }
 
-  // ── RENDERING ─────────────────────────────────────────────
+  function handleFiles(list) {
+    [...list].forEach(f => { if (!attachedFiles.find(x => x.name === f.name)) attachedFiles.push(f); });
+    renderTags();
+  }
+  function removeFile(name) {
+    attachedFiles = attachedFiles.filter(f => f.name !== name);
+    renderTags();
+  }
+  function renderTags() {
+    document.getElementById('fileTags').innerHTML = attachedFiles.map(f =>
+      `<span class="ftag">${esc(f.name.length > 16 ? f.name.slice(0,14)+'…' : f.name)}<span class="ftag-x" onclick="removeFile('${esc(f.name)}')">✕</span></span>`
+    ).join('');
+  }
+
+  const zone = document.getElementById('uploadZone');
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleFiles(e.dataTransfer.files); });
+
   function addMessage(text, role, label) {
-    hideEmptyState();
+    hideEmpty();
     const c = document.getElementById('messages');
     const w = document.createElement('div');
     w.className = `message ${role}`;
@@ -479,7 +546,7 @@
     const b = document.createElement('div');
     b.className = 'message-bubble'; b.textContent = text;
     w.appendChild(l); w.appendChild(b); c.appendChild(w);
-    scrollToBottom();
+    c.scrollTop = c.scrollHeight;
     return b;
   }
 
@@ -489,27 +556,25 @@
     thinkingEl = document.createElement('div');
     thinkingEl.className = 'message agent';
     thinkingEl.innerHTML = `<div class="message-label">Weberdy</div><div class="thinking-bubble"><div class="thinking-dot"></div><div class="thinking-dot"></div><div class="thinking-dot"></div></div>`;
-    c.appendChild(thinkingEl); scrollToBottom();
+    c.appendChild(thinkingEl); c.scrollTop = c.scrollHeight;
   }
 
   function removeThinking() { if (thinkingEl) { thinkingEl.remove(); thinkingEl = null; } }
-
-  function hideEmptyState() { const e = document.getElementById('empty-state'); if (e) e.style.display = 'none'; }
-  function scrollToBottom() { const c = document.getElementById('messages'); c.scrollTop = c.scrollHeight; }
+  function hideEmpty() { const e = document.getElementById('empty-state'); if (e) e.style.display = 'none'; }
   function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
   function autoResize(el) {
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 120) + 'px';
     document.getElementById('send-btn').disabled = !el.value.trim();
   }
+  function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function showError(msg) { showToast('error-toast', msg, 3500); }
-  function showInfo(msg) { showToast('info-toast', msg, 2000); }
+  function showInfo(msg)  { showToast('info-toast', msg, 2000); }
   function showToast(id, msg, duration) {
     const t = document.getElementById(id);
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), duration);
   }
 </script>
-<script src="agent.js"></script>
 </body>
 </html>
